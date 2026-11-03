@@ -8,7 +8,7 @@ have no runtime: they publish versioned packages that products adopt in their ow
 | Area | Choice | Why |
 | --- | --- | --- |
 | Build | Gradle 9.8 wrapper, `java-library`, version catalog, sources and Javadoc jars | Consumers get docs and sources in their IDE |
-| Tests | JUnit 6, AssertJ, JaCoCo line coverage of at least 80% | Shared code is reused widely, so the bar is higher |
+| Tests | JUnit 6, AssertJ, JaCoCo line coverage of at least 90% | The floor the platform requires (VX-11); shared code is reused widely |
 | API hygiene | Small public surface (`api` vs `implementation`), Javadoc linting | Fewer accidental breaking changes |
 | Releases | Tag `vX.Y.Z` → tests, publish to GitHub Packages, GitHub release with notes | Semantic versioning; immutable published versions |
 | Supply chain | Actions pinned by SHA, wrapper validation, dependency graph submission and review, Dependabot | Reviewed, known dependencies |

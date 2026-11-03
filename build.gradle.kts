@@ -46,7 +46,7 @@ tasks.jacocoTestReport {
 
 tasks.jacocoTestCoverageVerification {
     dependsOn(tasks.jacocoTestReport)
-    violationRules { rule { limit { counter = "LINE"; minimum = "0.80".toBigDecimal() } } }
+    violationRules { rule { limit { counter = "LINE"; minimum = "0.90".toBigDecimal() } } }
 }
 
 tasks.check { dependsOn(tasks.jacocoTestCoverageVerification) }
