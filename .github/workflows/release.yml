@@ -1,5 +1,8 @@
 # Tag vX.Y.Z on main to release. Publishes to GitHub Packages and creates a GitHub release with
-# generated notes. The Vrixel SDLC marks a release candidate when a change set merges and stable
+# generated notes. Releases only from a tag on main, and every published jar gets a signed build
+# provenance attestation, so a consumer can check it was built here, from that commit
+# (gh attestation verify <jar> --repo <this repo>). Protect v* tags with a ruleset so only
+# release managers can create them. The Vrixel SDLC marks a release candidate when a change set merges and stable
 # at G6; consuming products move to it in their own change sets.
 name: release
 
@@ -18,19 +21,29 @@ jobs:
     permissions:
       contents: write
       packages: write
+      id-token: write       # signs the provenance attestation (Sigstore, keyless)
+      attestations: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0          # all history, to check the tag is on main
           persist-credentials: false
       - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: "21"
       - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+      - name: Refuse a tag that isn't on main
+        run: |
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main \
+            || { echo "$GITHUB_REF_NAME is not on main; release from main only"; exit 1; }
       - name: Build, test and publish
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: ./gradlew check publish -PreleaseVersion="${GITHUB_REF_NAME#v}"
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: build/libs/*.jar
       - name: Create the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}

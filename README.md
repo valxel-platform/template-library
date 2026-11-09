@@ -10,7 +10,7 @@ have no runtime: they publish versioned packages that products adopt in their ow
 | Build | Gradle 9.8 wrapper, `java-library`, version catalog, sources and Javadoc jars | Consumers get docs and sources in their IDE |
 | Tests | JUnit 6, AssertJ, JaCoCo line coverage of at least 90% | The floor the platform requires (VX-11); shared code is reused widely |
 | API hygiene | Small public surface (`api` vs `implementation`), Javadoc linting | Fewer accidental breaking changes |
-| Releases | Tag `vX.Y.Z` → tests, publish to GitHub Packages, GitHub release with notes | Semantic versioning; immutable published versions |
+| Releases | Tag `vX.Y.Z` on main → tests, publish to GitHub Packages, a signed build provenance attestation for every jar, GitHub release with notes. A tag that isn't on main is refused; protect `v*` tags with a ruleset so only release managers create them | Semantic versioning; immutable published versions; consumers can check a jar was built here (`gh attestation verify <jar> --repo <this repo>`) |
 | Supply chain | Actions pinned by SHA, wrapper validation, dependency graph submission and review, Dependabot | Reviewed, known dependencies |
 
 ## Checks
